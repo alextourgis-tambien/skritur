@@ -11,6 +11,11 @@
   let loading;
   let destroyed = false;
 
+  function releaseAboutGate() {
+    clearTimeout(window.skriturAboutFallback);
+    document.documentElement.classList.remove('skritur-about-pending');
+  }
+
   function loadScript(path, globalName) {
     if (window[globalName]) return Promise.resolve();
     return new Promise((resolve, reject) => {
@@ -37,7 +42,7 @@
   function initialize() {
     cleanup();
     cleanup = () => {};
-    if (destroyed || reducedMotion.matches) return;
+    if (destroyed || reducedMotion.matches) { releaseAboutGate(); return; }
     const { gsap, ScrollTrigger, SplitText, Lenis } = window;
     gsap.registerPlugin(ScrollTrigger, SplitText);
     const disposers = [];
@@ -174,6 +179,7 @@
         if (!target.textContent.trim() || target.querySelector('a, button, input, select, textarea, [contenteditable]')) return;
         if (hovered.has(target) && !hovered.get(target)) return;
         let revealed = false;
+        const about = Boolean(target.closest('.h-about__p'));
         const split = SplitText.create(target, {
           type: 'lines',
           mask: 'lines',
@@ -191,7 +197,8 @@
               ease: 'power3.out',
               scrollTrigger: {
                 trigger: target,
-                start: 'top 90%',
+                // Hero paragraphs wait for a real scroll instead of playing on load.
+                start: about ? () => Math.max(24, target.getBoundingClientRect().top + window.scrollY - window.innerHeight * .9) : 'top 90%',
                 once: true,
                 onEnter: () => { revealed = true; },
               },
@@ -203,7 +210,11 @@
         splits.push(split);
     }
     [...revealTargets].filter(target => ![...revealTargets].some(other => other !== target && target.contains(other)))
-      .forEach(target => revealObserver.observe(target));
+      .forEach(target => {
+        if (target.closest('.h-about__p') && target.getClientRects().length) splitReveal(target);
+        else revealObserver.observe(target);
+      });
+    releaseAboutGate();
 
     listen(window, 'load', scheduleRefresh);
     listen(window, 'pageshow', scheduleRefresh);
@@ -213,7 +224,7 @@
   }
 
   async function refresh() {
-    if (destroyed || reducedMotion.matches) { cleanup(); cleanup = () => {}; return; }
+    if (destroyed || reducedMotion.matches) { cleanup(); cleanup = () => {}; releaseAboutGate(); return; }
     try {
       await dependencies();
       if (document.fonts) await document.fonts.ready;
@@ -221,16 +232,18 @@
     } catch (error) {
       cleanup();
       cleanup = () => {};
+      releaseAboutGate();
       console.warn('[Skritur] Animations unavailable; content stays readable.', error);
     }
   }
 
   window.SkriturAnimations = {
-    version: '1.0.1',
+    version: '1.0.2',
     lenis: null,
     refresh,
     destroy() {
       destroyed = true;
+      releaseAboutGate();
       cleanup();
       cleanup = () => {};
       reducedMotion.removeEventListener('change', refresh);
