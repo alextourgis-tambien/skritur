@@ -32,6 +32,16 @@ Do not add a second Lenis initialization in Webflow.
 `window.SkriturAnimations.destroy()` restores the original DOM and releases listeners.
 Add `data-lenis-prevent` to independently scrollable modal/list containers.
 
+## Homepage journal carousel
+
+`assets/journal.js` uses `.h-journal__wrapper`, `.h-journal__collection-list`,
+and `.h-journal__collection-item` with `.h-journal__arrow.is--left` / `.is--right`.
+Disable **Limit items** and pagination on this CMS Collection List in Webflow:
+all loaded articles participate, with one visible article and looping navigation.
+GSAP fades between articles; reduced motion switches immediately. Enter, Space,
+and left/right arrow keys work on the controls. Inactive articles are inert and
+hidden from assistive technology. With only one article, controls are disabled.
+
 ## Updates
 
 jsDelivr caches branch URLs. Changes to `@main` can take time to reach visitors.
