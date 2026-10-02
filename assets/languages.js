@@ -91,18 +91,23 @@
         busy = true;
         const outgoing = selected(current);
         const incoming = selected(language);
+        const prepareIncoming = () => scope.dispatchEvent(new CustomEvent('skritur:languageprepare', {
+          bubbles: true, detail: {elements: incoming},
+        }));
         const finish = () => { busy = false; refreshLayout(); };
         if (motion.matches) { show(language); finish(); return; }
         if (window.gsap) {
+          window.gsap.set(incoming, {opacity: 0});
           timeline = window.gsap.timeline({onComplete: finish})
             .to(outgoing, {opacity: 0, duration: .15, ease: 'power1.out'})
-            .call(() => { show(language); refreshLayout(); })
+            .call(() => { show(language); prepareIncoming(); refreshLayout(); })
             .fromTo(incoming, {opacity: 0}, {opacity: 1, duration: .28, ease: 'power2.out'});
         } else {
           (async () => {
             await nativeFade(outgoing, 1, 0, 150);
             if (destroyed) return;
             show(language);
+            prepareIncoming();
             refreshLayout();
             await nativeFade(incoming, 0, 1, 280);
             animations.forEach(animation => animation.cancel());
