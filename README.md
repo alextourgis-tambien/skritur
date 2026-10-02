@@ -40,7 +40,7 @@ Add `data-lenis-prevent` to independently scrollable modal/list containers.
 and `.h-journal__collection-item` with `.h-journal__arrow.is--left` / `.is--right`.
 Disable **Limit items** and pagination on this CMS Collection List in Webflow:
 all loaded articles participate, with one visible article and looping navigation.
-GSAP dissolves the outgoing article over the incoming one in 850ms with sine easing,
+GSAP dissolves the outgoing article over the incoming one in 550ms with sine easing,
 keeping the image filled throughout the transition; reduced motion switches immediately. Enter, Space,
 and left/right arrow keys work on the controls. Inactive articles are inert and
 hidden from assistive technology. With only one article, controls are disabled.
