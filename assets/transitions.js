@@ -5,6 +5,9 @@
   const root = document.documentElement;
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const key = 'skritur:page-transition';
+  const exitDuration = 700;
+  const arrivalDuration = 900;
+  const easing = 'cubic-bezier(.37, 0, .63, 1)';
   let navigating = false;
   let destination;
   let navigationTimer;
@@ -17,10 +20,10 @@
     }
     html.skritur-leaving::after {
       pointer-events: auto;
-      animation: skritur-page-out .42s ease-in-out both;
+      animation: skritur-page-out ${exitDuration}ms ${easing} both;
     }
     html.skritur-arriving::after { opacity: 1; }
-    html.skritur-arriving.skritur-revealing::after { animation: skritur-page-in .38s ease-out both; }
+    html.skritur-arriving.skritur-revealing::after { animation: skritur-page-in ${arrivalDuration}ms ${easing} both; }
     @keyframes skritur-page-out {
       from { opacity: 0; }
       to { opacity: 1; }
@@ -42,9 +45,9 @@
 
   function revealArrival() {
     clearTimeout(arrivalTimer);
-    if (!root.classList.contains('skritur-arriving')) return;
+    if (!root.classList.contains('skritur-arriving') || root.classList.contains('skritur-revealing')) return;
     root.classList.add('skritur-revealing');
-    arrivalTimer = setTimeout(() => root.classList.remove('skritur-arriving', 'skritur-revealing'), 450);
+    arrivalTimer = setTimeout(() => root.classList.remove('skritur-arriving', 'skritur-revealing'), arrivalDuration + 100);
   }
 
   // Home also fades in on direct visits; storage is optional.
@@ -90,7 +93,7 @@
     destination = url;
     root.classList.add('skritur-leaving');
     // Fallback for disabled CSS animations or missed animationend events.
-    navigationTimer = setTimeout(navigate, 480);
+    navigationTimer = setTimeout(navigate, exitDuration + 100);
   }
 
   function onAnimationEnd(event) {
