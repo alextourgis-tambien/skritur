@@ -56,7 +56,7 @@
       root.append(status);
       root.classList.add('skritur-journal');
       remember(list, 'style');
-      items.forEach(item => remember(item, 'inert'));
+      items.forEach(item => { remember(item, 'inert'); remember(item, 'style'); });
       const show = next => {
         index = next;
         items.forEach((item, position) => {
@@ -74,32 +74,42 @@
         window.SkriturAnimations?.lenis?.resize();
         window.ScrollTrigger?.refresh();
       };
-      const fade = async (from, to, duration) => {
-        const tween = list.animate([{opacity: from}, {opacity: to}], {duration, easing: 'ease-in-out', fill: 'forwards'});
-        nativeAnimations.add(tween);
-        await tween.finished;
-        return tween;
-      };
       const move = direction => {
         if (busy || items.length < 2 || destroyed) return;
         busy = true;
         const next = (index + direction + items.length) % items.length;
-        const finish = () => { busy = false; announce(); };
+        const outgoing = items[index];
+        const incoming = items[next];
+        const properties = ['opacity', 'visibility', 'z-index'];
+        const previousStyles = [outgoing, incoming].map(item => properties.map(name =>
+          [name, item.style.getPropertyValue(name), item.style.getPropertyPriority(name)]));
+        const restore = () => [outgoing, incoming].forEach((item, i) => previousStyles[i].forEach(([name, value, priority]) => {
+          if (value) item.style.setProperty(name, value, priority);
+          else item.style.removeProperty(name);
+        }));
+        const finish = () => { show(next); restore(); busy = false; announce(); };
         if (motion.matches) { show(next); finish(); return; }
+        // Keep an opaque incoming article underneath: no flash of the white page.
+        incoming.style.visibility = 'visible';
+        incoming.style.opacity = '1';
+        incoming.style.zIndex = '1';
+        outgoing.style.zIndex = '2';
+        outgoing.style.opacity = '1';
         if (window.gsap) {
-          animation = window.gsap.timeline({onComplete: finish})
-            .to(list, {opacity: 0, duration: .18, ease: 'power1.inOut'})
-            .call(() => show(next))
-            .to(list, {opacity: 1, duration: .28, ease: 'power2.out'});
+          animation = window.gsap.to(outgoing, {
+            opacity: 0, duration: .85, ease: 'sine.inOut', onComplete: finish,
+          });
         } else {
+          const tween = outgoing.animate([{opacity: 1}, {opacity: 0}], {
+            duration: 850, easing: 'cubic-bezier(.37, 0, .63, 1)', fill: 'forwards',
+          });
+          nativeAnimations.add(tween);
           (async () => {
-            await fade(1, 0, 180);
+            await tween.finished;
             if (destroyed) return;
-            show(next);
-            await fade(0, 1, 280);
-            nativeAnimations.forEach(tween => tween.cancel());
-            nativeAnimations.clear();
             finish();
+            tween.cancel();
+            nativeAnimations.delete(tween);
           })().catch(() => { busy = false; });
         }
       };
