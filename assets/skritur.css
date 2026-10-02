@@ -3,7 +3,12 @@ html.lenis, html.lenis body { height: auto; }
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
 .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
 .lenis.lenis-stopped { overflow: hidden; }
-.skritur-roll { display: block; position: relative; overflow: clip; }
-.skritur-roll__original, .skritur-roll__copy { display: block; }
+.skritur-roll {
+  display: block; position: relative; overflow: clip;
+  margin-block: -.18em -.28em;
+}
+.skritur-roll__original, .skritur-roll__copy {
+  display: block; box-sizing: border-box; padding-block: .18em .28em;
+}
 .skritur-roll__copy { position: absolute; inset: 0; pointer-events: none; }
-.skritur-line-mask { padding-block: .08em; margin-block: -.08em; }
+.skritur-line-mask { padding-block: .18em .28em; margin-block: -.18em -.28em; }
