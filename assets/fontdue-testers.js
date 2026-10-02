@@ -101,14 +101,14 @@
       font-family: var(--font-family);
     }
     fontdue-store-modal :is(button, input, select, textarea) {
-      border-radius: 5px;
+      border-radius: 5px !important;
       font-family: var(--font-family);
     }
     fontdue-store-modal button {
       transition: background-color .2s ease, color .2s ease, border-color .2s ease;
     }
     fontdue-store-modal :is(.store-modal__container__back-button, .store-modal__container__close-button) {
-      border-radius: 0;
+      border-radius: 0 !important;
     }
     fontdue-store-modal input { background: #f3f3f5; border-color: #dedede; }
     fontdue-store-modal :is(button, input, select, textarea):focus-visible {
