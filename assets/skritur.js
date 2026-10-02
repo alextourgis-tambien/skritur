@@ -161,6 +161,9 @@
 
     // Split text blocks rather than whole listings; preserve interactive descendants.
     const revealTargets = new Set();
+    const aboutBlocks = [...document.querySelectorAll('.h-about__p')]
+      .filter(element => element.getClientRects().length);
+    const aboutDelay = document.documentElement.classList.contains('skritur-arriving') ? .45 : .15;
     document.querySelectorAll(revealSelector).forEach(element => {
       const blocks = [...element.querySelectorAll('p, h1, h2, h3, h4, h5, h6, .text-block')];
       (blocks.length ? blocks.filter(block => !blocks.some(other => other !== block && block.contains(other))) : [element])
@@ -180,6 +183,7 @@
         if (hovered.has(target) && !hovered.get(target)) return;
         let revealed = false;
         const about = Boolean(target.closest('.h-about__p'));
+        const aboutIndex = Math.max(0, aboutBlocks.indexOf(target.closest('.h-about__p')));
         const split = SplitText.create(target, {
           type: 'lines',
           mask: 'lines',
@@ -195,13 +199,15 @@
               duration: 0.7,
               stagger: 0.075,
               ease: 'power3.out',
-              scrollTrigger: {
+              ...(about ? {
+                delay: aboutDelay + aboutIndex * .3,
+                onStart: () => { revealed = true; },
+              } : { scrollTrigger: {
                 trigger: target,
-                // Hero paragraphs wait for a real scroll instead of playing on load.
-                start: about ? () => Math.max(24, target.getBoundingClientRect().top + window.scrollY - window.innerHeight * .9) : 'top 90%',
+                start: 'top 90%',
                 once: true,
                 onEnter: () => { revealed = true; },
-              },
+              }}),
             });
             scheduleRefresh();
             return animation;
@@ -238,7 +244,7 @@
   }
 
   window.SkriturAnimations = {
-    version: '1.0.2',
+    version: '1.0.3',
     lenis: null,
     refresh,
     destroy() {
