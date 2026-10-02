@@ -58,18 +58,27 @@
         const referenceDisplay = reference ? getComputedStyle(reference).display : 'block';
         displays.set(element, display !== 'none' ? display : referenceDisplay !== 'none' ? referenceDisplay : 'block');
       });
-      const available = language => variants.some(element => languageOf(element) === language
-        && !element.classList.contains('w-condition-invisible') && element.textContent.trim());
+      const hasContent = element => {
+        if (element.classList.contains('w-condition-invisible')) return false;
+        // The required CMS name may remain in FR even when the article is EN-only.
+        // Decide article availability from its body, so the readable language opens.
+        if (element.classList.contains('article__c-wrapper')) {
+          const body = element.querySelector('.w-richtext');
+          return Boolean(body && (body.textContent.trim() || body.querySelector('img, iframe, video')));
+        }
+        return Boolean(element.textContent.trim());
+      };
+      const available = language => variants.some(element => languageOf(element) === language && hasContent(element));
       let current = available('fr') ? 'fr' : languages.find(available);
       if (!current) return;
       let busy = false;
       let timeline;
       const animations = new Set();
-      const selected = language => variants.filter(element => languageOf(element) === language && !element.classList.contains('w-condition-invisible'));
+      const selected = language => variants.filter(element => languageOf(element) === language && hasContent(element));
       const show = language => {
         current = language;
         variants.forEach(element => {
-          const visible = languageOf(element) === language && !element.classList.contains('w-condition-invisible');
+          const visible = languageOf(element) === language && hasContent(element);
           element.style.setProperty('display', visible ? displays.get(element) : 'none', 'important');
           set(element, 'aria-hidden', String(!visible));
           set(element, 'lang', languageOf(element) === 'bz' ? 'br' : languageOf(element));
