@@ -2,7 +2,7 @@
 (() => {
   'use strict';
   if (window.SkriturLanguages) return;
-  const selector = '.h-journal__title-wrapper, .team__content, .journal__description, .journal__title, .article__c-wrapper';
+  const selector = '.h-journal__title-wrapper, .team__content, .journal__description, .journal__title, .article__c-wrapper, .support__header';
   const languages = ['fr', 'bz', 'en'];
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const disposers = [];
@@ -31,7 +31,12 @@
       if (!buttons.length) return;
       let scope = group.parentElement;
       let variants = [];
-      while (scope && !scope.matches('body, .main')) {
+      // Support's controls sit in a separate section above both language headers.
+      if (group.closest('.support__l-wrapper')) {
+        scope = group.closest('main, .main') || document.body;
+        variants = [...scope.querySelectorAll('.support__header')].filter(languageOf);
+      }
+      while (!variants.length && scope && !scope.matches('body, .main')) {
         const candidates = [...scope.querySelectorAll(selector)].filter(languageOf);
         variants = candidates.filter(element => !candidates.some(parent => parent !== element && parent.contains(element)));
         if (variants.length) break;
