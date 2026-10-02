@@ -1,12 +1,40 @@
-/* Mount Fontdue's native type testers and character viewers on Webflow font pages. */
+/* Connect Webflow to Fontdue's store, type testers and character viewers. */
 (() => {
   'use strict';
   if (window.SkriturFontdueTesters) return;
   const storeURL = 'https://www.skritur.eu';
   const hosts = [...document.querySelectorAll('.typetester__wrapper, .glyph__wrapper')];
   const pageSlug = location.pathname.match(/^\/fonts\/([^/]+)\/?$/)?.[1];
-  if (!hosts.length || !pageSlug) return;
+  const cartButtons = [...document.querySelectorAll('.cart__wrapper')];
+  const buyButtons = [...document.querySelectorAll('.nav__font--wrapper')];
+  const collections = {
+    bilzig: 'Rm9udENvbGxlY3Rpb246MjE1MDkxNTU1ODk5OTM0MjQ1NQ==',
+    principio: 'Rm9udENvbGxlY3Rpb246MTkzNDQxNDM2NzM5NTQyOTc4NA==',
+    gallmau: 'Rm9udENvbGxlY3Rpb246MTcxNzQ2NDg3MTc4NjAwMzc4Nw==',
+    brito: 'Rm9udENvbGxlY3Rpb246MTQ1MjEzNTk1NTQ0NzQzMTA2Nw==',
+    kornog: 'Rm9udENvbGxlY3Rpb246MTQ1NzQ1NDc4MjkxNzkxODE4MQ==',
+  };
+  if (!hosts.length && !cartButtons.length && !buyButtons.length) return;
   const nodes = [];
+  const restoreAttributes = [];
+  const connectButton = (button, route, fallback) => {
+    for (const [name, value] of Object.entries({
+      'fontdue-click': 'open-store-modal',
+      'fontdue-store-route': route,
+      ...(button.tagName === 'A' ? {href: fallback} : {role: 'button', tabindex: '0'}),
+    })) {
+      const original = button.getAttribute(name);
+      restoreAttributes.push(() => original === null ? button.removeAttribute(name) : button.setAttribute(name, original));
+      button.setAttribute(name, value);
+    }
+  };
+  cartButtons.forEach(button => connectButton(button, 'cart', storeURL + '/?store=cart'));
+  if (collections[pageSlug]) buyButtons.forEach(button => connectButton(button,
+    'product/' + collections[pageSlug], storeURL + '/fonts/' + pageSlug + '?store=product/' + pageSlug));
+  const modal = document.createElement('fontdue-store-modal');
+  modal.setAttribute('data-lenis-prevent', '');
+  document.body.append(modal);
+  nodes.push(modal);
   const style = document.createElement('style');
   style.textContent = `
     .typetester__wrapper { width: 100%; min-width: 0; }
@@ -41,6 +69,8 @@
       },
     });
   })();
+  // The cart must be available before visitors scroll to the preview widgets.
+  initializeRuntime().catch(error => console.warn('[Skritur] Fontdue store unavailable.', error));
   const mount = async host => {
     const isViewer = host.matches('.glyph__wrapper');
     const slug = host.getAttribute('data-fontdue-collection') || decodeURIComponent(pageSlug);
@@ -77,12 +107,13 @@
     lazy.unobserve(entry.target);
     mount(entry.target);
   }), {rootMargin: '500px 0px'});
-  hosts.forEach(host => lazy.observe(host));
+  if (pageSlug) hosts.forEach(host => lazy.observe(host));
   window.SkriturFontdueTesters = {
     destroy() {
       destroyed = true;
       lazy.disconnect(); observer.disconnect();
       nodes.reverse().forEach(node => node.remove());
+      restoreAttributes.reverse().forEach(restore => restore());
       delete window.SkriturFontdueTesters;
     },
   };
