@@ -69,7 +69,10 @@
         refresh();
       };
       const close = () => {
-        if (toggle.getAttribute('aria-expanded') === 'true') toggle.click();
+        // Webflow listens to mouseup on desktop, so a synthetic toggle click
+        // does not reliably close it. Its close event is idempotent.
+        if (window.jQuery) window.jQuery(dropdown).triggerHandler('w-close.w-dropdown');
+        else if (toggle.getAttribute('aria-expanded') === 'true') toggle.click();
         toggle.focus({preventScroll: true});
       };
       const choose = button => {
