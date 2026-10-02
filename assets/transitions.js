@@ -1,4 +1,4 @@
-/* Early head script: a blue-to-white veil between internal Webflow pages. */
+/* Early head script: a white fade between pages and on the first home load. */
 (() => {
   'use strict';
   if (window.SkriturTransitions) return;
@@ -19,11 +19,11 @@
       pointer-events: auto;
       animation: skritur-page-out .42s ease-in-out both;
     }
-    html.skritur-arriving::after { animation: skritur-page-in .38s ease-out both; }
+    html.skritur-arriving::after { opacity: 1; }
+    html.skritur-arriving.skritur-revealing::after { animation: skritur-page-in .38s ease-out both; }
     @keyframes skritur-page-out {
-      0% { opacity: 0; background: #315bff; }
-      55% { opacity: .85; background: #315bff; }
-      100% { opacity: 1; background: #fff; }
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
     @keyframes skritur-page-in { from { opacity: 1; } to { opacity: 0; } }
     @media (prefers-reduced-motion: reduce) {
@@ -35,21 +35,33 @@
   function reset() {
     clearTimeout(navigationTimer);
     clearTimeout(arrivalTimer);
-    root.classList.remove('skritur-leaving', 'skritur-arriving');
+    root.classList.remove('skritur-leaving', 'skritur-arriving', 'skritur-revealing');
     navigating = false;
     destination = null;
   }
 
-  // Storage can be blocked. Departure still works; navigation always continues.
+  function revealArrival() {
+    clearTimeout(arrivalTimer);
+    if (!root.classList.contains('skritur-arriving')) return;
+    root.classList.add('skritur-revealing');
+    arrivalTimer = setTimeout(() => root.classList.remove('skritur-arriving', 'skritur-revealing'), 450);
+  }
+
+  // Home also fades in on direct visits; storage is optional.
+  let shouldArrive = location.pathname === '/';
   try {
     const pending = JSON.parse(sessionStorage.getItem(key) || 'null');
     sessionStorage.removeItem(key);
-    if (!motion.matches && pending && pending.url === location.pathname + location.search
-      && Date.now() - pending.time < 15000) {
-      root.classList.add('skritur-arriving');
-      arrivalTimer = setTimeout(() => root.classList.remove('skritur-arriving'), 450);
-    }
-  } catch (_) { /* Optional arrival marker. */ }
+    shouldArrive ||= Boolean(pending && pending.url === location.pathname + location.search
+      && Date.now() - pending.time < 15000);
+  } catch (_) { /* Home still works when storage is blocked. */ }
+  if (!motion.matches && shouldArrive) {
+    root.classList.add('skritur-arriving');
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', revealArrival, { once: true });
+    else requestAnimationFrame(revealArrival);
+    // Never leave the site covered if document loading stalls.
+    arrivalTimer = setTimeout(revealArrival, 1500);
+  }
 
   function navigate() {
     if (!destination) return;
@@ -84,7 +96,7 @@
   function onAnimationEnd(event) {
     if (event.target !== root) return;
     if (event.animationName === 'skritur-page-out') navigate();
-    if (event.animationName === 'skritur-page-in') root.classList.remove('skritur-arriving');
+    if (event.animationName === 'skritur-page-in') root.classList.remove('skritur-arriving', 'skritur-revealing');
   }
   function onMotionChange() {
     if (motion.matches && navigating) navigate();
@@ -99,6 +111,7 @@
     destroy() {
       reset();
       document.removeEventListener('click', onClick);
+      document.removeEventListener('DOMContentLoaded', revealArrival);
       root.removeEventListener('animationend', onAnimationEnd);
       window.removeEventListener('pageshow', onPageShow);
       motion.removeEventListener('change', onMotionChange);
