@@ -1,0 +1,9 @@
+/* Skritur: styles scoped to elements created by the animation script. */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
+.skritur-roll { display: block; position: relative; overflow: clip; }
+.skritur-roll__original, .skritur-roll__copy { display: block; }
+.skritur-roll__copy { position: absolute; inset: 0; pointer-events: none; }
+.skritur-line-mask { padding-block: .08em; margin-block: -.08em; }
