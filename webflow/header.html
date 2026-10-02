@@ -1,3 +1,9 @@
 <!-- Site settings > Custom code > Head code -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/alextourgis-tambien/skritur@18fd84266b66d09f1d556696836cbccaab4bfab4/assets/skritur.css">
+<script>
+if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  document.documentElement.classList.add('skritur-about-pending');
+  window.skriturAboutFallback = setTimeout(function () { document.documentElement.classList.remove('skritur-about-pending'); }, 6000);
+}
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/alextourgis-tambien/skritur@648fdd9c792d21c5bbc18dc7ad1ce4a143c3cbd8/assets/skritur.css">
 <script src="https://cdn.jsdelivr.net/gh/alextourgis-tambien/skritur@dcb65f74a14a311811bd2c12037908f7461fd70b/assets/transitions.js"></script>
