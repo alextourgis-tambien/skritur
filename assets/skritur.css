@@ -13,3 +13,14 @@ html.lenis, html.lenis body { height: auto; }
 }
 .skritur-roll__copy { position: absolute; inset: 0; pointer-events: none; }
 .skritur-line-mask { padding-block: .18em .28em; margin-block: -.18em -.28em; }
+
+/* Journal previews: preserve the full CMS text, truncate only the listing. */
+.journal__cc :is(.journal__title, .journal__description) {
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+}
+.journal__cc :is(.journal__title, .journal__description).is--fr {
+  display: -webkit-box;
+}
