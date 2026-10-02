@@ -64,6 +64,59 @@
   nodes.push(readyProbe);
   const style = document.createElement('style');
   style.textContent = `
+    fontdue-store-modal {
+      --font-family: '00 Hypertext', Arial, sans-serif;
+      --primary_text_color: #000;
+      --secondary_text_color: #777;
+      --primary_background_color: #fff;
+      --secondary_background_color: #f3f3f5;
+      --horizontal_rule_color: #dedede;
+      --link_color: #555;
+      --link_hover_color: #000;
+      --active_link_color: #000;
+      --error_color: #d00000;
+      --success_color: #000;
+      --cart_indicator_color: #f00;
+      --button_background_color: #f3f3f5;
+      --button_border_color: #dedede;
+      --button_text_color: #000;
+      --button_hover_background_color: #e8e8eb;
+      --button_hover_border_color: #999;
+      --button_hover_text_color: #000;
+      --button_selected_background_color: #111;
+      --button_selected_border_color: #111;
+      --button_selected_text_color: #fff;
+      --add_to_cart_button_background_color: #f00;
+      --add_to_cart_button_border_color: #f00;
+      --add_to_cart_button_text_color: #fff;
+      --add_to_cart_button_hover_background_color: #df0000;
+      --add_to_cart_button_hover_border_color: #df0000;
+      --add_to_cart_button_hover_text_color: #fff;
+      --checkout_button_background_color: #f00;
+      --checkout_button_border_color: #f00;
+      --checkout_button_text_color: #fff;
+      --checkout_button_hover_background_color: #df0000;
+      --checkout_button_hover_border_color: #df0000;
+      --checkout_button_hover_text_color: #fff;
+      font-family: var(--font-family);
+    }
+    fontdue-store-modal :is(button, input, select, textarea) {
+      border-radius: 5px;
+      font-family: var(--font-family);
+    }
+    fontdue-store-modal button {
+      transition: background-color .2s ease, color .2s ease, border-color .2s ease;
+    }
+    fontdue-store-modal :is(.store-modal__container__back-button, .store-modal__container__close-button) {
+      border-radius: 0;
+    }
+    fontdue-store-modal input { background: #f3f3f5; border-color: #dedede; }
+    fontdue-store-modal :is(button, input, select, textarea):focus-visible {
+      outline: 2px solid #111; outline-offset: 3px;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      fontdue-store-modal button { transition: none; }
+    }
     .typetester__wrapper { width: 100%; min-width: 0; }
     .typetester__wrapper fontdue-type-testers { display: block; width: 100%; }
     .typetester__wrapper .type-tester { border-top-color: rgba(0, 0, 0, .18); }
