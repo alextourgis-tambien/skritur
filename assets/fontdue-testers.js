@@ -11,6 +11,7 @@
   style.textContent = `
     .typetester__wrapper { width: 100%; min-width: 0; }
     .typetester__wrapper fontdue-type-testers { display: block; width: 100%; }
+    .typetester__wrapper .type-tester { border-top-color: rgba(0, 0, 0, .18); }
     .typetester__wrapper .skritur-fontdue-status { font: inherit; opacity: .5; padding: 2rem 0; }
   `;
   document.head.append(style);
