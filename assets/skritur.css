@@ -28,3 +28,21 @@ html.lenis, html.lenis body { height: auto; }
 .journal__cc :is(.journal__title, .journal__description).is--fr {
   display: -webkit-box;
 }
+
+/* Journal rows: a small directional cue on hover and keyboard focus. */
+.journal__element .journal__button {
+  transition: background-color .3s ease;
+}
+.journal__element .journal__arrow {
+  transition: translate .35s cubic-bezier(.22, 1, .36, 1);
+}
+@media (hover: hover) and (pointer: fine) {
+  .journal__element:hover .journal__button { background-color: #e8e8eb; }
+  .journal__element:hover .journal__arrow { translate: 4px 0; }
+}
+.journal__element:focus-visible .journal__button { background-color: #e8e8eb; }
+.journal__element:focus-visible .journal__arrow { translate: 4px 0; }
+@media (prefers-reduced-motion: reduce) {
+  .journal__element .journal__button, .journal__element .journal__arrow { transition: none; }
+  .journal__element:is(:hover, :focus-visible) .journal__arrow { translate: none; }
+}
