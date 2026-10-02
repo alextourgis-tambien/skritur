@@ -12,7 +12,11 @@ html.lenis, html.lenis body { height: auto; }
   display: block; box-sizing: border-box; padding-block: .18em .28em;
 }
 .skritur-roll__copy { position: absolute; inset: 0; pointer-events: none; }
-.skritur-line-mask { padding-block: .18em .28em; margin-block: -.18em -.28em; }
+/* SplitText names its generated wrappers skritur-mask-line-mask. */
+.skritur-line-mask, .skritur-mask-line-mask {
+  padding-block: .18em .28em;
+  margin-block: -.18em -.28em;
+}
 
 /* Journal previews: preserve the full CMS text, truncate only the listing. */
 .journal__cc :is(.journal__title, .journal__description) {
