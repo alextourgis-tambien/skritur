@@ -161,6 +161,7 @@
 
     // Split text blocks rather than whole listings; preserve interactive descendants.
     const revealTargets = new Set();
+    const preparedReveals = new Set();
     const aboutBlocks = [...document.querySelectorAll('.h-about__p')]
       .filter(element => element.getClientRects().length);
     const aboutDelay = document.documentElement.classList.contains('skritur-arriving') ? .45 : .15;
@@ -179,8 +180,10 @@
     disposers.push(() => revealObserver.disconnect());
 
     function splitReveal(target) {
+        if (preparedReveals.has(target)) return;
         if (!target.textContent.trim() || target.querySelector('a, button, input, select, textarea, [contenteditable]')) return;
         if (hovered.has(target) && !hovered.get(target)) return;
+        preparedReveals.add(target);
         let revealed = false;
         const about = Boolean(target.closest('.h-about__p'));
         const aboutIndex = Math.max(0, aboutBlocks.indexOf(target.closest('.h-about__p')));
@@ -221,6 +224,16 @@
         else revealObserver.observe(target);
       });
     releaseAboutGate();
+
+    // Complete line layout before a translated home title starts fading in.
+    listen(document, 'skritur:languageprepare', event => {
+      const variants = event.detail?.elements || [];
+      variants.forEach(element => element.querySelectorAll('.h-journal__title').forEach(target => {
+        if (!target.getClientRects().length) return;
+        revealObserver.unobserve(target);
+        splitReveal(target);
+      }));
+    });
 
     listen(window, 'load', scheduleRefresh);
     listen(window, 'pageshow', scheduleRefresh);
