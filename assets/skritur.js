@@ -6,7 +6,7 @@
   const CDN = 'https://cdn.jsdelivr.net/npm/';
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const hoverMedia = window.matchMedia('(hover: hover) and (pointer: fine)');
-  const revealSelector = '.h-journal__title, .Paragraph, .paragraph, .font__listing, .thanks__name';
+  const revealSelector = '.h-journal__title, .h-about__p, .Paragraph, .paragraph, .font__listing, .thanks__name';
   let cleanup = () => {};
   let loading;
   let destroyed = false;
@@ -226,7 +226,7 @@
   }
 
   window.SkriturAnimations = {
-    version: '1.0.0',
+    version: '1.0.1',
     lenis: null,
     refresh,
     destroy() {
