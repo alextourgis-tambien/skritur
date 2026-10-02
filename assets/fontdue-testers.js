@@ -18,6 +18,10 @@
   const nodes = [];
   const restoreAttributes = [];
   const connectButton = (button, route, fallback) => {
+    // Fontdue handles the action on body; keep links on the Webflow page.
+    const preventNavigation = event => event.preventDefault();
+    button.addEventListener('click', preventNavigation);
+    restoreAttributes.push(() => button.removeEventListener('click', preventNavigation));
     for (const [name, value] of Object.entries({
       'fontdue-click': 'open-store-modal',
       'fontdue-store-route': route,
