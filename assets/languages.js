@@ -56,7 +56,9 @@
         const base = [...element.classList].find(name => name !== 'is--' + languageOf(element) && selector.includes('.' + name));
         const reference = variants.find(other => other.classList.contains(base) && languageOf(other) === 'fr');
         const referenceDisplay = reference ? getComputedStyle(reference).display : 'block';
-        displays.set(element, display !== 'none' ? display : referenceDisplay !== 'none' ? referenceDisplay : 'block');
+        // Keep native three-line ellipses when switching a journal preview's language.
+        const preview = element.matches('.journal__cc .journal__title, .journal__cc .journal__description');
+        displays.set(element, preview ? '-webkit-box' : display !== 'none' ? display : referenceDisplay !== 'none' ? referenceDisplay : 'block');
       });
       const hasContent = element => {
         if (element.classList.contains('w-condition-invisible')) return false;
