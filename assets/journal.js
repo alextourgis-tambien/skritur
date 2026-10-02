@@ -97,11 +97,11 @@
         outgoing.style.opacity = '1';
         if (window.gsap) {
           animation = window.gsap.to(outgoing, {
-            opacity: 0, duration: .85, ease: 'sine.inOut', onComplete: finish,
+            opacity: 0, duration: .55, ease: 'sine.inOut', onComplete: finish,
           });
         } else {
           const tween = outgoing.animate([{opacity: 1}, {opacity: 0}], {
-            duration: 850, easing: 'cubic-bezier(.37, 0, .63, 1)', fill: 'forwards',
+            duration: 550, easing: 'cubic-bezier(.37, 0, .63, 1)', fill: 'forwards',
           });
           nativeAnimations.add(tween);
           (async () => {
