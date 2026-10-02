@@ -17,9 +17,17 @@
   if (!hosts.length && !cartButtons.length && !buyButtons.length) return;
   const nodes = [];
   const restoreAttributes = [];
+  let storeReady = false;
+  let pendingButton;
   const connectButton = (button, route, fallback) => {
     // Fontdue handles the action on body; keep links on the Webflow page.
-    const preventNavigation = event => event.preventDefault();
+    const preventNavigation = event => {
+      event.preventDefault();
+      if (!storeReady) {
+        event.stopPropagation();
+        pendingButton = button;
+      }
+    };
     button.addEventListener('click', preventNavigation);
     restoreAttributes.push(() => button.removeEventListener('click', preventNavigation));
     for (const [name, value] of Object.entries({
@@ -39,6 +47,21 @@
   modal.setAttribute('data-lenis-prevent', '');
   document.body.append(modal);
   nodes.push(modal);
+  // A rendered native cart button confirms that Fontdue's click handler is ready.
+  const readyProbe = document.createElement('fontdue-cart-button');
+  readyProbe.hidden = true;
+  const readyObserver = new MutationObserver(() => {
+    if (!readyProbe.querySelector('button')) return;
+    storeReady = true;
+    readyObserver.disconnect();
+    readyProbe.remove();
+    const button = pendingButton;
+    pendingButton = null;
+    button?.click();
+  });
+  readyObserver.observe(readyProbe, {childList: true, subtree: true});
+  document.body.append(readyProbe);
+  nodes.push(readyProbe);
   const style = document.createElement('style');
   style.textContent = `
     .typetester__wrapper { width: 100%; min-width: 0; }
@@ -116,6 +139,7 @@
     destroy() {
       destroyed = true;
       lazy.disconnect(); observer.disconnect();
+      readyObserver.disconnect(); pendingButton = null;
       nodes.reverse().forEach(node => node.remove());
       restoreAttributes.reverse().forEach(restore => restore());
       delete window.SkriturFontdueTesters;
