@@ -16,10 +16,15 @@
       color: inherit; box-shadow: none; outline: none; appearance: none;
     }
     .skritur-typetester input.typetester__text::placeholder { color: inherit; opacity: 1; }
-    .typetester.skritur-typetester:focus-within { outline: 2px solid #315bff; outline-offset: 3px; }
-    .font__wrapper-left.skritur-type-clip { min-width: 0; max-width: 100%; overflow: hidden; }
-    .skritur-type-clip .font__font { flex: 0 0 auto; white-space: pre; width: max-content; max-width: none; }
-    .skritur-type-clip.skritur-type-overflow {
+    .typetester.skritur-typetester:focus-within { outline: none; box-shadow: none; }
+    .font__wrapper-left.skritur-type-clip { min-width: 0; max-width: 100%; overflow: visible; }
+    .skritur-type-clip .font__font {
+      flex: 0 1 auto; min-width: 0; white-space: pre;
+      width: max-content; max-width: 100%; overflow: hidden;
+      box-sizing: border-box; padding-block: .18em .28em;
+      margin-block: -.18em -.28em;
+    }
+    .skritur-type-clip.skritur-type-overflow .font__font {
       -webkit-mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - min(48px, 12%)), transparent 100%);
       mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - min(48px, 12%)), transparent 100%);
     }
@@ -36,7 +41,8 @@
     const measure = () => {
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => {
-        wrappers.forEach(wrapper => wrapper.classList.toggle('skritur-type-overflow', wrapper.scrollWidth > wrapper.clientWidth + 1));
+        wrappers.forEach(wrapper => wrapper.classList.toggle('skritur-type-overflow',
+          [...wrapper.querySelectorAll('.font__font')].some(sample => sample.scrollWidth > sample.clientWidth + 1)));
       });
     };
     const update = value => {
