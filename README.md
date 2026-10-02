@@ -22,6 +22,8 @@ Do not add a second Lenis initialization in Webflow.
 - Footer rolling text, including standalone `.footer__link-text` and `.footer__link`.
 - Scroll reveals on `.h-journal__title`, `.Paragraph`, `.paragraph`,
   `.font__listing`, `.thanks__name`. Real lines, with responsive re-splitting.
+- `.h-about__p` reveals line by line on page load, with 300ms between blocks;
+  the three hero paragraphs do not depend on scrolling.
 - Reveals run once; hidden language variants are prepared when visible.
 - Keyboard focus also activates hovers. Decorative text copies are aria-hidden.
 - `prefers-reduced-motion: reduce` disables this script's smoothing and animations.
