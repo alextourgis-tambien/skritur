@@ -15,7 +15,7 @@
       border-radius: 0; padding: 0; margin: 0; background: transparent;
       color: inherit; box-shadow: none; outline: none; appearance: none;
     }
-    .skritur-typetester input.typetester__text::placeholder { color: inherit; opacity: 1; }
+    .skritur-typetester input.typetester__text::placeholder { color: inherit; opacity: .5; }
     .typetester.skritur-typetester:focus-within { outline: none; box-shadow: none; }
     .font__wrapper-left.skritur-type-clip { min-width: 0; max-width: 100%; overflow: visible; }
     .skritur-type-clip .font__font {
