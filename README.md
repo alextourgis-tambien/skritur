@@ -42,6 +42,20 @@ GSAP fades between articles; reduced motion switches immediately. Enter, Space,
 and left/right arrow keys work on the controls. Inactive articles are inert and
 hidden from assistive technology. With only one article, controls are disabled.
 
+## Support categories
+
+`assets/support.js` creates one `.question__cat` per `.support__title-link`,
+within each `.support__header` language variant. Questions retain their original
+Webflow dropdown nodes and are grouped by the CMS category slug. Empty categories
+show a short message. Category links support click, Enter and Space, with Lenis
+scrolling and a 90px header offset (native scrolling when Lenis is unavailable).
+
+In Webflow, bind `data-support-category` on the category link template to the
+Support Categories **Slug**, and on the question item template to Supports
+**Category → Slug**. Keep all categories and questions loaded: no item limit or
+pagination. Publishing CMS additions or category changes updates the groups
+automatically; no question/category mapping is hardcoded in JavaScript.
+
 ## Updates
 
 jsDelivr caches branch URLs. Changes to `@main` can take time to reach visitors.
