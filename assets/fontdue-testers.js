@@ -146,6 +146,37 @@
       url: storeURL,
       config: {
         typeTester: { selectable: true, shy: false, buyButton: false },
+        // Stripe iframes do not inherit the modal's CSS custom properties.
+        stripe: {
+          appearance: {
+            theme: 'flat',
+            variables: {
+              fontFamily: "'00 Hypertext', Arial, sans-serif",
+              fontWeightNormal: '400', fontWeightMedium: '400', fontWeightBold: '400',
+              fontSizeBase: '16px', borderRadius: '5px', spacingUnit: '4px',
+              colorPrimary: '#111111', colorBackground: '#f3f3f5',
+              colorText: '#000000', colorTextSecondary: '#777777',
+              colorTextPlaceholder: '#777777', colorBackgroundText: '#000000',
+              colorDanger: '#d00000', colorDangerText: '#d00000',
+              colorSuccess: '#000000', colorSuccessText: '#000000',
+              focusBoxShadow: '0 0 0 1px #111111',
+            },
+            rules: {
+              '.Label': { color: '#000000', fontWeight: '400' },
+              '.Input': { backgroundColor: '#f3f3f5', color: '#000000', border: '1px solid #dedede', boxShadow: 'none' },
+              '.Input:focus': { borderColor: '#111111', boxShadow: '0 0 0 1px #111111' },
+              '.Tab': { backgroundColor: '#f3f3f5', color: '#000000', border: '1px solid #dedede', boxShadow: 'none' },
+              '.Tab:hover': { backgroundColor: '#e8e8eb', color: '#000000', borderColor: '#999999' },
+              '.Tab--selected, .Tab--selected:hover': { backgroundColor: '#111111', color: '#ffffff', borderColor: '#111111', boxShadow: 'none' },
+              '.TabIcon': { fill: '#000000' },
+              '.TabIcon--selected': { fill: '#ffffff' },
+              '.TabLabel': { color: '#000000' },
+              '.TabLabel--selected': { color: '#ffffff' },
+              '.AccordionItem': { backgroundColor: '#f3f3f5', color: '#000000', border: '1px solid #dedede' },
+              '.AccordionItem--selected': { backgroundColor: '#ffffff', color: '#000000', borderColor: '#111111' },
+            },
+          },
+        },
       },
     });
   })();
