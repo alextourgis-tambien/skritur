@@ -130,8 +130,7 @@
   let destroyed = false;
   let runtime;
   const resize = () => {
-    window.SkriturAnimations?.lenis?.resize();
-    window.ScrollTrigger?.refresh();
+    window.SkriturAnimations?.requestLayoutRefresh?.();
   };
   const observer = new ResizeObserver(resize);
   const initializeRuntime = () => runtime ||= (async () => {
