@@ -10,6 +10,7 @@
   let cleanup = () => {};
   let loading;
   let destroyed = false;
+  let requestLayoutRefresh = () => {};
 
   function releaseAboutGate() {
     clearTimeout(window.skriturAboutFallback);
@@ -51,11 +52,12 @@
     const handled = new Set();
     const hovered = new Map();
     let lenis;
-    let refreshFrame;
+    let refreshTimer;
     const context = gsap.context(() => {});
 
     cleanup = () => {
-      cancelAnimationFrame(refreshFrame);
+      clearTimeout(refreshTimer);
+      requestLayoutRefresh = () => {};
       disposers.reverse().forEach(dispose => dispose());
       splits.forEach(split => split.revert());
       tweens.forEach(tween => tween.kill());
@@ -63,13 +65,19 @@
       window.SkriturAnimations.lenis = null;
     };
 
+    // Batch layout work and leave the current scroll destination untouched.
+    // Lenis autoResize already tracks dimensions; resize() would reset its inertia.
     const scheduleRefresh = () => {
-      cancelAnimationFrame(refreshFrame);
-      refreshFrame = requestAnimationFrame(() => {
-        lenis?.resize();
-        ScrollTrigger.refresh();
-      });
+      clearTimeout(refreshTimer);
+      refreshTimer = setTimeout(() => {
+        if (lenis?.isScrolling || ScrollTrigger.isScrolling()) {
+          scheduleRefresh();
+          return;
+        }
+        ScrollTrigger.refresh(true);
+      }, 120);
     };
+    requestLayoutRefresh = scheduleRefresh;
     const listen = (element, event, callback) => {
       element.addEventListener(event, callback);
       disposers.push(() => element.removeEventListener(event, callback));
@@ -78,17 +86,24 @@
     // Own only our instance, leaving any existing smooth-scroll setup intact.
     if (!window.lenis && !document.documentElement.classList.contains('lenis')) {
       lenis = new Lenis({
-        lerp: 0.18,
+        lerp: 0.12,
         smoothWheel: true,
         syncTouch: false,
-        autoRaf: true,
+        autoRaf: false,
+        autoResize: true,
         anchors: false, // Webflow keeps ownership of anchor navigation.
         virtualScroll: () => !['hidden', 'clip'].includes(getComputedStyle(document.body).overflowY)
           && !['hidden', 'clip'].includes(getComputedStyle(document.documentElement).overflowY),
         prevent: node => Boolean(node.closest?.('[data-lenis-prevent], .w-nav-menu[data-nav-menu-open]')),
       });
+      const tick = time => lenis.raf(time * 1000);
       lenis.on('scroll', ScrollTrigger.update);
-      disposers.push(() => lenis.destroy());
+      gsap.ticker.add(tick);
+      gsap.ticker.lagSmoothing(0);
+      disposers.push(() => {
+        gsap.ticker.remove(tick);
+        lenis.destroy();
+      });
     }
     window.SkriturAnimations.lenis = lenis || null;
 
@@ -257,7 +272,8 @@
   }
 
   window.SkriturAnimations = {
-    version: '1.0.3',
+    version: '1.0.4',
+    requestLayoutRefresh: () => requestLayoutRefresh(),
     lenis: null,
     refresh,
     destroy() {
