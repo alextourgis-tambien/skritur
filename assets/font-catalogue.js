@@ -63,8 +63,7 @@
         target.title = 'Starting price per style. Final price depends on licence and company size.';
       }
     });
-    window.SkriturAnimations?.lenis?.resize();
-    window.ScrollTrigger?.refresh();
+    window.SkriturAnimations?.requestLayoutRefresh?.();
   }
 
   // Verified public Fontdue snapshot keeps the catalogue correct even if the API is unavailable.
