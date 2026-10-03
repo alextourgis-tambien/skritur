@@ -14,8 +14,7 @@
     .skritur-support-category:focus { outline: none; }
   `;
   function refresh() {
-    window.SkriturAnimations?.lenis?.resize();
-    window.ScrollTrigger?.refresh();
+    window.SkriturAnimations?.requestLayoutRefresh?.();
   }
   function initialize() {
     document.querySelectorAll('.support__header').forEach((root, rootIndex) => {
