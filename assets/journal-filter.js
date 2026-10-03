@@ -52,8 +52,7 @@
       let tween;
       let revision = 0;
       const refresh = () => {
-        window.SkriturAnimations?.lenis?.resize();
-        window.ScrollTrigger?.refresh();
+        window.SkriturAnimations?.requestLayoutRefresh?.();
       };
       const apply = (category, title) => {
         let count = 0;
