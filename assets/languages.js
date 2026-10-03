@@ -89,8 +89,7 @@
       };
       const refreshLayout = () => requestAnimationFrame(() => {
         if (destroyed) return;
-        window.SkriturAnimations?.lenis?.resize();
-        window.ScrollTrigger?.refresh();
+        window.SkriturAnimations?.requestLayoutRefresh?.();
         scope.dispatchEvent(new CustomEvent('skritur:languagechange', {bubbles: true, detail: {language: current}}));
       });
       const nativeFade = async (elements, from, to, duration) => {
