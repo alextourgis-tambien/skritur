@@ -71,8 +71,7 @@
         const title = [...items[index].querySelectorAll('.h-journal__title')]
           .find(element => getComputedStyle(element.parentElement).display !== 'none');
         status.textContent = `Article ${index + 1} sur ${items.length}${title ? ' : ' + title.textContent.trim() : ''}`;
-        window.SkriturAnimations?.lenis?.resize();
-        window.ScrollTrigger?.refresh();
+        window.SkriturAnimations?.requestLayoutRefresh?.();
       };
       const move = direction => {
         if (busy || items.length < 2 || destroyed) return;
