@@ -168,7 +168,7 @@
       });
     });
     document.querySelectorAll('.footer__link').forEach(host => {
-      const targets = host.querySelectorAll('.footer__link-text, .text-block');
+      const targets = host.querySelectorAll('.footer__link-text, .footer__text, .text-block');
       if (targets.length) targets.forEach(target => makeHover(host, target));
       else makeHover(host, host);
     });
@@ -272,7 +272,7 @@
   }
 
   window.SkriturAnimations = {
-    version: '1.0.4',
+    version: '1.0.5',
     requestLayoutRefresh: () => requestLayoutRefresh(),
     lenis: null,
     refresh,
